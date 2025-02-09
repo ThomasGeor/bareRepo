@@ -131,6 +131,7 @@ alias esp='idf.py'
 alias gitBareRepo='git --git-dir=$HOME/bareRepo --work-tree=$HOME'
 
 # git aliases
+gitBareRepo config status.showUntrackedFiles no
 git config --global alias.co checkout
 git config --global alias.sw switch
 git config --global alias.br branch
