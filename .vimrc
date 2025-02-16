@@ -28,4 +28,4 @@ set statusline+=%=
 set statusline+=\ row:\%l\ col:\%c\ percent:\%p%%
 set laststatus=2
 
-nnoremap <silent> <Cr> :let @/= '\<\' . expand('<cword>') . '\>'<bar>set hls <Cr>
+nnoremap <silent> <Cr> :let @/= '\<' . expand('<cword>') . '\>'<bar>set hls <Cr>
