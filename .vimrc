@@ -16,6 +16,7 @@ set ignorecase
 set showmatch
 set hlsearch
 set wildmenu
+set vb t_vb=
 
 inoremap jj <esc>
 

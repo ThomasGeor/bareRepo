@@ -6,38 +6,46 @@ case $- in
       *) return;;
 esac
 
-# set readline editor
+# Define aliases in ~/.bash_aliases instead of here
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# Set readline editor mode
 set -o vi
 
 # History control
-# don't put duplicate lines or lines starting with space in the history.
-HISTCONTROL=ignoreboth
-
-# append to the history file, don't overwrite it
-shopt -s histappend
-
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTCONTROL=ignoreboth # protect passwords and API keys
 HISTSIZE=1000
 HISTFILESIZE=2000
+HISTIGNORE='ll:ls:clear:pwd:exit:fg:bg:top:df:history'
 
-# disable XON/XOFF flow control to enable forward history search
+shopt -s histappend
+shopt -s histverify
+shopt -s histreedit
+
+# Disable XON/XOFF flow control to enable forward history search
 stty -ixon
+
+# Filename expansions
+FIGNORE='.swp:.o:~'
 
 shopt -s autocd
 shopt -s cdable_vars
 shopt -s cdspell
 shopt -s direxpand
 shopt -s dotglob
+shopt -s failglob
+shopt -s globstar
+shopt -s nocaseglob
 
+shopt -s xpg_echo
 shopt -s checkjobs
 
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-#shopt -s globstar
-
-# make less more friendly for non-text input files, see lesspipe(1)
+# Use lesspipe on top of less for non-text input files
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
+# TODO: Customize prompt and output colors.
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
@@ -98,11 +106,6 @@ fi
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
-# Define aliases in ~/.bash_aliases instead of here
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
