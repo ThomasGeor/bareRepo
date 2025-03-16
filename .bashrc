@@ -27,7 +27,7 @@ shopt -s histreedit
 # Disable XON/XOFF flow control to enable forward history search
 stty -ixon
 
-# Filename expansions
+# Ignored filename expansions
 FIGNORE='.swp:.o:~'
 
 shopt -s autocd
@@ -42,40 +42,60 @@ shopt -s nocaseglob
 shopt -s xpg_echo
 shopt -s checkjobs
 
-# Use lesspipe on top of less for non-text input files
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
 #Jetson nano on boot
 #sudo jetson_clocks
 #PATH=$PATH:/usr/local/cuda-11.0/bin
 
-# TODO: Customize prompt and output colors.
+# Prompt customization
 cat << 'EOF'
+                                                                 #####
+                                                                #######
+                   #                                            ##O#O##
+  ######          ###                                           #VVVVV#
+    ##             #                                          ##  VVV  ##
+    ##         ###    ### ####   ###    ###  ##### #####     #          ##
+    ##        #  ##    ###    ##  ##     ##    ##   ##      #            ##
+    ##       #   ##    ##     ##  ##     ##      ###        #            ###
+    ##          ###    ##     ##  ##     ##      ###       QQ#           ##Q
+    ##       # ###     ##     ##  ##     ##     ## ##    QQQQQQ#       #QQQQQQ
+    ##      ## ### #   ##     ##  ###   ###    ##   ##   QQQQQQQ#     #QQQQQQQ
+  ############  ###   ####   ####   #### ### ##### #####   QQQQQ#######QQQQQ
 EOF
+
+OUTPUT_BORDER=""
+# adjust to window size by sourcing .bashrc
+for ((i=0; i<$COLUMNS; i++))
+do
+    OUTPUT_BORDER+="-"
+done
+
+#BASH_INFO="\e[0;0;32m\s \V Dev:\l \e[0m\n"
+#DATE_INFO="\e[0;0;35m\[[\t/\d]\e[0m\n"
 PROMPT_DIR_TRIM=3
-PROMPT_COMMAND=''
-#populate - to match the terminal length
-PS0="--------------------------------------------------------\n"
-PS1=$PS0"\e[0;0;32m\s \V Dev:\l \n \w\nPrc:\j \n[\t/\d] \u@\h\$ \e[0m"
-PS2="My test prompt2"
-PS4="-"
+SYSTEM_INFO="\e[0;0;36m \w | Prc:\j \e[0m\n"
+USER_INFO="\e[0;0;32m\u@\h\$ \e[0m"
+RAM_TOTAL="$(awk '/Mem/ { if(NR==1) printf "%d",$2;}' /proc/meminfo)"
+IP_ADDRESS="$(ip addr show eth0 | awk '/inet / {print "IP: "$2}')"
 
-# custom colors of common commands
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+system_stats (){
+    if [ -f cpu_load.awk ];then
+      CPU_LOAD="$(./cpu_load.awk)"
+    fi
+    RAM_USAGE="$(awk  -v total=$RAM_TOTAL 'BEGIN{ORS=" | "} /Mem/ { if(NR==3) print "RAM: "(1-($2/total))*100"%"}' /proc/meminfo)"
+    DISK_USAGE="$(df -T | awk 'BEGIN{ORS=" | "} /:\\/ {print $1,$6}')"
+    # Internet speed test needs speedtest extra tool.
+    # It is very slow and not worth the waiting time. Run it explicitly.
+    # speedtest --progress=no --progress-update-interval=100
+    echo $CPU_LOAD$RAM_USAGE$DISK_USAGE$IP_ADDRESS
+}
 
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-fi
+PROMPT_COMMAND[0]='echo $OUTPUT_BORDER'
+PROMPT_COMMAND[1]='system_stats'
+PS0=$OUTPUT_BORDER
+PS1=$SYSTEM_INFO$USER_INFO
 
 # colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-# Add an "alert" alias for long running commands.  Use like so:
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01' # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
@@ -90,8 +110,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# System settings
 # TODO:check for.vim/pack/themes/start existance and download package if needed
-
-# Don't show untracked files when checking the bare repo's status
 gitBareRepo config status.showUntrackedFiles no
+
+# Use lesspipe on top of less for non-text input files
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
