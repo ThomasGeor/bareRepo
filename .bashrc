@@ -75,9 +75,10 @@ PROMPT_DIR_TRIM=3
 SYSTEM_INFO="\e[0;0;36m \w | Prc:\j \e[0m\n"
 USER_INFO="\e[0;0;32m\u@\h\$ \e[0m"
 RAM_TOTAL="$(awk '/Mem/ { if(NR==1) printf "%d",$2;}' /proc/meminfo)"
-IP_ADDRESS="$(ip addr show eth0 | awk '/inet / {print "IP: "$2}')"
+IP_ADDRESS="$(ip addr | awk 'BEGIN{ORS=" | "} /inet / {if($7 ~ "eth") print "IP: "$2}')"
 
 system_stats (){
+    echo -n $OUTPUT_BORDER
     if [ -f cpu_load.awk ];then
       CPU_LOAD="$(./cpu_load.awk)"
     fi
@@ -89,10 +90,9 @@ system_stats (){
     echo $CPU_LOAD$RAM_USAGE$DISK_USAGE$IP_ADDRESS
 }
 
-PROMPT_COMMAND[0]='echo $OUTPUT_BORDER'
-PROMPT_COMMAND[1]='system_stats'
-PS0=$OUTPUT_BORDER
+PS0=$OUTPUT_BORDER"\n"
 PS1=$SYSTEM_INFO$USER_INFO
+PROMPT_COMMAND=system_stats
 
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01' # Add an "alert" alias for long running commands.  Use like so:

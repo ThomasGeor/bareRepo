@@ -18,5 +18,5 @@ BEGIN {
     }
     cpu_load = (1-(idle-prev_idle)/(total-prev_total))*100"%"
   }
-  print "CPU:"cpu_load
+  print "CPU: "cpu_load
 }
