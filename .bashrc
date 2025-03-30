@@ -62,12 +62,16 @@ cat << 'EOF'
   ############  ###   ####   ####   #### ### ##### #####   QQQQQ#######QQQQQ
 EOF
 
-OUTPUT_BORDER=""
-# adjust to window size by sourcing .bashrc
-for ((i=0; i<$COLUMNS; i++))
-do
-    OUTPUT_BORDER+="-"
-done
+OUTPUT_BORDER=
+adjust_output_border(){
+    OUTPUT_BORDER=""
+    # adjust to window size by sourcing .bashrc
+    for ((i=0; i<$COLUMNS; i++))
+    do
+        OUTPUT_BORDER+="-"
+    done
+}
+adjust_output_border
 
 #BASH_INFO="\e[0;0;32m\s \V Dev:\l \e[0m\n"
 #DATE_INFO="\e[0;0;35m\[[\t/\d]\e[0m\n"
@@ -75,9 +79,10 @@ PROMPT_DIR_TRIM=3
 SYSTEM_INFO="\e[0;0;36m \w | Prc:\j \e[0m\n"
 USER_INFO="\e[0;0;32m\u@\h\$ \e[0m"
 RAM_TOTAL="$(awk '/Mem/ { if(NR==1) printf "%d",$2;}' /proc/meminfo)"
-IP_ADDRESS="$(ip addr | awk 'BEGIN{ORS=" | "} /inet / {if($7 ~ "eth") print "IP: "$2}')"
+IP_ADDRESS="$(ip addr | awk 'BEGIN{ORS=" | "} /inet / {if(($7 ~ "eth")||($8 ~ "eth")) print "IP: "$2}')"
 
 system_stats (){
+    adjust_output_border
     echo -n $OUTPUT_BORDER
     if [ -f cpu_load.awk ];then
       CPU_LOAD="$(./cpu_load.awk)"
@@ -90,14 +95,9 @@ system_stats (){
     echo $CPU_LOAD$RAM_USAGE$DISK_USAGE$IP_ADDRESS
 }
 
-PS0=$OUTPUT_BORDER"\n"
-PS1=$SYSTEM_INFO$USER_INFO
 PROMPT_COMMAND=system_stats
-
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01' # Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+PS0="${adjust_output_border}"$OUTPUT_BORDER"\n"
+PS1=$SYSTEM_INFO$USER_INFO
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -110,8 +110,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# TODO:check for.vim/pack/themes/start existance and download package if needed
-gitBareRepo config status.showUntrackedFiles no
-
 # Use lesspipe on top of less for non-text input files
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# TODO:check for.vim/pack/themes/start existance and download package if needed
+gitBareRepo config status.showUntrackedFiles no
