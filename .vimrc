@@ -7,7 +7,7 @@ set cursorline
 set tabstop=4
 set shiftwidth=4
 set expandtab
-set textwidth=100
+set textwidth=80
 set backspace=indent,eol,start "
 set nobackup
 set nowrap

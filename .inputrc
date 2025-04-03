@@ -1,1 +1,11 @@
 set bell-style none
+
+# Prompt color scheme
+set enable-bracketed-paste on
+set active-region-start-color "\e[48;5;41m"  # Background blue
+set active-region-end-color "\e[49m"  # Reset background
+set colored-completion-prefix on
+set colored-stats on
+set completion-display-width 80
+set completion-ignore-case on
+set completion-map-case on
