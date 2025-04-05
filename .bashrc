@@ -11,8 +11,6 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-# Set readline editor mode
-set -o vi
 # Dirs - blue | Text, Markdown - yellow | Awk, Shell scripts - green | C Source, Header files - magenta
 export LS_COLORS='di=01;34:*.txt=00;33:*.md=00;33:*.sh=00;32:*.awk=00;32:*.c=00;35:*.h=00;35'
 
@@ -75,13 +73,13 @@ adjust_output_border(){
 }
 adjust_output_border
 
-#BASH_INFO="\e[0;0;32m\s \V Dev:\l \e[0m\n"
-#DATE_INFO="\e[0;0;35m\[[\t/\d]\e[0m\n"
+#BASH_INFO="\[\e[0;0;32m\]\s \V Dev:\l \[\e[0m\]\n"
+#DATE_INFO="\[\e[0;0;35m\]\[[\t/\d]\[\e[0m\n\]"
 PROMPT_DIR_TRIM=3
-SYSTEM_INFO="\e[0;0;36m \w | Prc:\j \e[0m\n"
-USER_INFO="\e[0;0;32m\u@\h\$ \e[0m"
-RAM_TOTAL="$(awk '/Mem/ { if(NR==1) printf "%d",$2;}' /proc/meminfo)"
-IP_ADDRESS="$(ip addr | awk 'BEGIN{ORS=" | "} /inet / {if(($7 ~ "eth")||($8 ~ "eth")) print "IP: "$2}')"
+SYSTEM_INFO="\[\e[0;0;36m\]\[ \w | Prc:\j \[\e[0m\]\n"
+USER_INFO="\[\e[0;0;32m\]\u@\h\$ \[\e[0m\]"
+RAM_TOTAL="$(awk '/MemTotal/ {printf "%d",$2;}' /proc/meminfo)"
+IP_ADDRESS="$(ip addr | awk 'BEGIN{ORS=" | "} /inet/ && /eth/ {print "IP: "$2}')"
 
 system_stats (){
     adjust_output_border
@@ -89,11 +87,11 @@ system_stats (){
     if [ -f cpu_load.awk ];then
       CPU_LOAD="$(./cpu_load.awk)"
     fi
-    RAM_USAGE="$(awk  -v total=$RAM_TOTAL 'BEGIN{ORS=" | "} /Mem/ { if(NR==3) print "RAM: "(1-($2/total))*100"%"}' /proc/meminfo)"
+    RAM_USAGE="$(awk -v total=$RAM_TOTAL 'BEGIN{ORS=" | "} /MemAvailable/ {print "RAM: "(1-($2/total))*100"%"}' /proc/meminfo)"
     DISK_USAGE="$(df -T | awk 'BEGIN{ORS=" | "} /:\\/ {print $1,$6}')"
-    # Internet speed test needs speedtest extra tool.
-    # It is very slow and not worth the waiting time. Run it explicitly.
-    # speedtest --progress=no --progress-update-interval=100
+    # Internet speed test needs extra tool (eg speedtest).
+    # It is very slow even in silent mode and is not worth the waiting time.
+    #speedtest --progress=no --progress-update-interval=100 # Run it explicitly.
     echo $CPU_LOAD$RAM_USAGE$DISK_USAGE$IP_ADDRESS
 }
 
