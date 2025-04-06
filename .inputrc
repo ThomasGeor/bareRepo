@@ -1,14 +1,20 @@
+# You need to build and install Readline and Bash locally with
+# readline-installed option. Might also need to link installed
+# readline with isntalled bash.
 set editing-mode vi
-set show-mode-in-prompt on
+$if mode=vi set show-mode-in-prompt on
 set vi-cmd-mode-string "\[vi_c\]"
 set vi-ins-mode-string "\[vi_i\]"
+$endif
 
 set bell-style none
 
 # Prompt color scheme
 set enable-bracketed-paste on
+$if version >= 8.0
 set active-region-start-color "\e[48;5;41m"  # Background blue
 set active-region-end-color "\e[49m"  # Reset background
+$endif
 set colored-completion-prefix on
 set colored-stats on
 set completion-display-width 80
@@ -16,14 +22,33 @@ set completion-ignore-case on
 set completion-map-case on
 set completion-prefix-display-length 3
 set completion-query-items 30
-set enable-bracketed-paste on
 set mark-modified-lines on
 set mark-symlinked-directories on
 #set revert-all-at-newline on
 set show-all-if-ambiguous on
 
-# Customized key binding
+# TODO
+# Customize and control history search fill capabilities. (bind -p)
+# Make a macro to auto bracket word
+# Make a macro to add $ at the start of a word
+# Make a macro to auto quote words
+# Make insert mode macros equal to command mode macros
+# Insert mode vi-like move semantics
+"\e0": beginning-of-line
+"\ea": end-of-line
+"\el": forward-char
+"\eh": backward-char
+#"\ek": forward-word
+#"\ej": backward-word
+"\ew": shell-forward-word
+"\eb": shell-backward-word
 "\ek": history-search-forward
 "\ej": history-search-backward
+"\es": history-substring-search-forward
+"\er": history-substring-search-backward
+#"\ep": yank-nth-arg
+# Insert quoted text
+"\e'": "\"\"\eh"
 "\eq": accept-line
-"\C-l": clear-screen
+"\ed": redraw-current-line
+"\C-l": clear-display
