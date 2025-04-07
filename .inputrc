@@ -2,7 +2,8 @@
 # readline-installed option. Might also need to link installed
 # readline with isntalled bash.
 set editing-mode vi
-$if mode=vi set show-mode-in-prompt on
+$if mode=vi
+set show-mode-in-prompt on
 set vi-cmd-mode-string "\[vi_c\]"
 set vi-ins-mode-string "\[vi_i\]"
 $endif
@@ -38,15 +39,30 @@ set show-all-if-ambiguous on
 "\ea": end-of-line
 "\el": forward-char
 "\eh": backward-char
-#"\ek": forward-word
-#"\ej": backward-word
-"\ew": shell-forward-word
-"\eb": shell-backward-word
-"\ek": history-search-forward
+"\ew": forward-word
+"\eb": backward-word
+"\eW": shell-forward-word
+"\eB": shell-backward-word
+"\e\C-w": kill-word
+"\e\C-b": backward-kill-word
+"\e\C-W": shell-kill-word
+"\e\C-B": shell-backward-kill-word
+"\ei": kill-line
+"\eu": backward-kill-line
+
 "\ej": history-search-backward
-"\es": history-substring-search-forward
+"\ek": history-search-forward
 "\er": history-substring-search-backward
-#"\ep": yank-nth-arg
+"\es": history-substring-search-forward
+#"\ep": yank-nth-arg Doesn't work for now
+"\e-": yank-last-arg
+"\eo": operate-and-get-next
+"\ec": transpose-chars
+"\et": transpose-words
+"\eT": shell-transpose-words
+"\eU": upcase-word
+"\eL": downcase-word
+
 # Insert quoted text
 "\e'": "\"\"\eh"
 "\eq": accept-line
