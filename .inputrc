@@ -1,6 +1,5 @@
-# You need to build and install Readline and Bash locally with
-# readline-installed option. Might also need to link installed
-# readline with isntalled bash.
+# You need to build Readline with -with-shared-termcap-library option
+# You need to build Bash with -with-installed-readine option
 set editing-mode vi
 $if mode=vi
 set show-mode-in-prompt on
@@ -22,7 +21,7 @@ set completion-display-width 80
 set completion-ignore-case on
 set completion-map-case on
 set completion-prefix-display-length 3
-set completion-query-items 30
+set completion-query-items 40
 set mark-modified-lines on
 set mark-symlinked-directories on
 #set revert-all-at-newline on
@@ -34,37 +33,60 @@ set show-all-if-ambiguous on
 # Make a macro to add $ at the start of a word
 # Make a macro to auto quote words
 # Make insert mode macros equal to command mode macros
-# Insert mode vi-like move semantics
+# Write a script to use Hunspell and spell-correct-word for spell-checking
 "\e0": beginning-of-line
-"\ea": end-of-line
+"\ee": end-of-line
 "\el": forward-char
 "\eh": backward-char
 "\ew": forward-word
 "\eb": backward-word
 "\eW": shell-forward-word
 "\eB": shell-backward-word
+
 "\e\C-w": kill-word
 "\e\C-b": backward-kill-word
 "\e\C-W": shell-kill-word
 "\e\C-B": shell-backward-kill-word
 "\ei": kill-line
 "\eu": backward-kill-line
+"\e ": delete-horizontal-space
+
+"\e>": copy-forward-word
+"\e<": copy-backward-word
+"\ey": yank
+"\ea": universal-argument
+"\e-": yank-last-arg
+"\e=": yank-nth-arg
+
+"\eU": upcase-word
+"\eL": downcase-word
+"\ec": transpose-chars
+"\et": transpose-words
+"\eT": shell-transpose-words
+
+"\e[f": character-search
+"\e[F": character-search-backward
 
 "\ej": history-search-backward
 "\ek": history-search-forward
 "\er": history-substring-search-backward
 "\es": history-substring-search-forward
-#"\ep": yank-nth-arg Doesn't work for now
-"\e-": yank-last-arg
+
+"\e[1;3A": menu-complete
+"\e[1;3B": menu-complete-backward
+"\e[Z": dabbrev-expand
+"\eE": shell-expand-line
+
+#Keyboard macros
+"\e[m": start-kbd-macro
+"\e[M": end-kbd-macro
+"\e[@": call-last-kbd-macro
+"\e\C-e": edit-and-execute-command
+
+"\eq": accept-line
 "\eo": operate-and-get-next
-"\ec": transpose-chars
-"\et": transpose-words
-"\eT": shell-transpose-words
-"\eU": upcase-word
-"\eL": downcase-word
+"\ed": redraw-current-line
+"\C-l": clear-display
 
 # Insert quoted text
 "\e'": "\"\"\eh"
-"\eq": accept-line
-"\ed": redraw-current-line
-"\C-l": clear-display

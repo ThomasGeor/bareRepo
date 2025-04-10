@@ -11,6 +11,8 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
+VISUAL=vim
+EDITOR=vim
 # Dirs - blue | Text, Markdown - yellow | Awk, Shell scripts - green | C Source, Header files - magenta
 export LS_COLORS='di=01;34:*.txt=00;33:*.md=00;33:*.sh=00;32:*.awk=00;32:*.c=00;35:*.h=00;35'
 
